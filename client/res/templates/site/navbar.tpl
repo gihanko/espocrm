@@ -82,7 +82,10 @@
                 <ul class="dropdown-menu" role="menu" aria-labelledby="nav-more-tabs-dropdown">
                 {{#each tabDefsList}}
                 {{#if isInMore}}
-                    <li data-name="{{name}}" class="in-more tab{{#if className}} {{className}}{{/if}}">
+                    <li
+                        data-name="{{name}}"
+                        class="in-more tab{{#if className}} {{className}}{{/if}}{{#if isGroup}} dropdown{{/if}}"
+                    >
                         <a
                             href="{{link}}"
                             class="{{aClassName}}"

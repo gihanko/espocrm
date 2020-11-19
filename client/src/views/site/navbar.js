@@ -93,7 +93,21 @@ define('views/site/navbar', 'view', function (Dep) {
             },
             'click .in-more .nav-link-group': function (e) {
                 e.stopPropagation();
+
+                this.openGroup($(e.currentTarget));
             },
+        },
+
+        openGroup: function ($target) {
+            this.$el.find('.in-more.tab.dropdown').removeClass('open');
+
+            $target.parent().addClass('open');
+
+
+            $target.css({
+                left: left + 'px',
+                top: top + 'px',
+            });
         },
 
         isCollapsableVisible: function () {
