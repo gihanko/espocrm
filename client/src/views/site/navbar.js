@@ -91,6 +91,9 @@ define('views/site/navbar', 'view', function (Dep) {
                 e.stopPropagation();
                 this.showMoreTabs();
             },
+            'click .in-more .nav-link-group': function (e) {
+                e.stopPropagation();
+            },
         },
 
         isCollapsableVisible: function () {
@@ -183,12 +186,16 @@ define('views/site/navbar', 'view', function (Dep) {
         },
 
         getTabList: function () {
-            var tabList = this.getPreferences().get('useCustomTabList') ? this.getPreferences().get('tabList') : this.getConfig().get('tabList');
-            tabList = Espo.Utils.clone(tabList || []);
+            var tabList = this.getPreferences().get('useCustomTabList') ?
+                this.getPreferences().get('tabList') :
+                this.getConfig().get('tabList');
+
+            tabList = Espo.Utils.cloneDeep(tabList || []);
 
             if (this.getThemeManager().getParam('navbarIsVertical')) {
                 tabList.unshift('Home');
             }
+
             return tabList;
         },
 
@@ -209,23 +216,33 @@ define('views/site/navbar', 'view', function (Dep) {
 
             var scopes = this.getMetadata().get('scopes') || {};
 
-            this.tabList = tabList.filter(function (scope) {
-                if (~['Home', '_delimiter_', '_delimiter-ext_'].indexOf(scope)) return true;
-                if (!scopes[scope]) return false;
+            this.tabList = tabList.filter(
+                function (item) {
+                    if (!item) {
+                        return false;
+                    }
 
-                var defs = scopes[scope] || {};
+                    if (typeof item === 'object') {
+                        item.itemList = item.itemList || [];
 
-                if (defs.disabled) return;
+                        item.itemList = item.itemList.filter(
+                            function (item) {
+                                return this.filterTabItem(item);
+                            },
+                            this
+                        );
 
-                if (defs.acl) {
-                    return this.getAcl().check(scope);
-                }
-                if (defs.tabAclPermission) {
-                    var level = this.getAcl().get(defs.tabAclPermission);
-                    return level && level !== 'no';
-                }
-                return true;
-            }, this);
+                        if (!item.itemList.length) {
+                            return false;
+                        }
+
+                        return true;
+                    }
+
+                    return this.filterTabItem(item);
+                },
+                this
+            );
 
             this.quickCreateList = this.getQuickCreateList().filter(function (scope) {
                 if (!scopes[scope]) return false;
@@ -248,6 +265,35 @@ define('views/site/navbar', 'view', function (Dep) {
                 $(window).off('resize.navbar');
                 $(window).off('scroll.navbar');
             });
+        },
+
+        filterTabItem: function (scope) {
+            if (~['Home', '_delimiter_', '_delimiter-ext_'].indexOf(scope)) {
+                return true;
+            }
+
+            var scopes = this.getMetadata().get('scopes') || {};
+
+            if (!scopes[scope]) {
+                return false;
+            }
+
+            var defs = scopes[scope] || {};
+
+            if (defs.disabled) {
+                return;
+            }
+
+            if (defs.acl) {
+                return this.getAcl().check(scope);
+            }
+            if (defs.tabAclPermission) {
+                var level = this.getAcl().get(defs.tabAclPermission);
+
+                return level && level !== 'no';
+            }
+
+            return true;
         },
 
         setupGlobalSearch: function () {
@@ -606,6 +652,7 @@ define('views/site/navbar', 'view', function (Dep) {
 
         setupTabDefsList: function () {
             var tabDefsList = [];
+
             var moreIsMet = false;
             var isHidden = false;
 
@@ -614,16 +661,32 @@ define('views/site/navbar', 'view', function (Dep) {
                 this.getPreferences().get('tabColorsDisabled') ||
                 this.getConfig().get('scopeColorsDisabled') ||
                 this.getConfig().get('tabColorsDisabled');
+
             var tabIconsDisabled = this.getConfig().get('tabIconsDisabled');
+
+            var params = {
+                colorsDisabled: colorsDisabled,
+                tabIconsDisabled: tabIconsDisabled,
+            };
+
+            var vars = {
+                moreIsMet: false,
+                isHidden: false,
+            };
 
             this.tabList.forEach(function (tab, i) {
                 if (tab === '_delimiter_' || tab === '_delimiter-ext_') {
-                    if (!moreIsMet) {
-                        moreIsMet = true;
+                    if (!vars.moreIsMet) {
+                        vars.moreIsMet = true;
+
                         return;
                     } else {
-                        if (i == this.tabList.length - 1) return;
-                        isHidden = true;
+                        if (i == this.tabList.length - 1) {
+                            return;
+                        }
+
+                        vars.isHidden = true;
+
                         tabDefsList.push({
                             name: 'show-more',
                             link: 'javascript:',
@@ -631,51 +694,96 @@ define('views/site/navbar', 'view', function (Dep) {
                             className: 'show-more',
                             html: '<span class="fas fa-ellipsis-h more-icon"></span>',
                         });
+
                         return;
                     }
                 }
 
-                var label;
-                var link;
-
-                if (tab == 'Home') {
-                    label = this.getLanguage().translate(tab);
-                    link = '#';
-                } else {
-                    label = this.getLanguage().translate(tab, 'scopeNamesPlural');
-                    link = '#' + tab;
-                }
-
-                var color = null;
-                if (!colorsDisabled) {
-                    var color = this.getMetadata().get(['clientDefs', tab, 'color']);
-                }
-
-                var shortLabel = label.substr(0, 2);
-
-                var iconClass = null;
-                if (!tabIconsDisabled) {
-                    iconClass = this.getMetadata().get(['clientDefs', tab, 'iconClass'])
-                }
-
-                var o = {
-                    link: link,
-                    label: label,
-                    shortLabel: shortLabel,
-                    name: tab,
-                    isInMore: moreIsMet,
-                    color: color,
-                    iconClass: iconClass,
-                    isAfterShowMore: isHidden,
-                    aClassName: 'nav-link',
-                };
-                if (isHidden) o.className = 'after-show-more';
-                if (color && !iconClass) {
-                    o.colorIconClass = 'color-icon fas fa-square-full';
-                }
-                tabDefsList.push(o);
+                tabDefsList.push(
+                    this.prepareTabItemDefs(params, tab, i, vars)
+                );
             }, this);
+
             this.tabDefsList = tabDefsList;
+        },
+
+        prepareTabItemDefs: function (params, tab, i, vars) {
+            var label;
+            var link;
+
+            var iconClass = null;
+
+            var color = null;
+
+            var isGroup = false;
+
+            var name = tab;
+
+            var aClassName = 'nav-link';
+
+            if (tab == 'Home') {
+                label = this.getLanguage().translate(tab);
+                link = '#';
+            }
+            else if (typeof tab === 'object') {
+                isGroup = true;
+
+                label = tab.label;
+                color = tab.color;
+                iconClass = tab.iconClass;
+
+                name = 'group-' + i;
+
+                link = 'javascript:';
+
+                aClassName = 'nav-link-group';
+            }
+            else {
+                label = this.getLanguage().translate(tab, 'scopeNamesPlural');
+                link = '#' + tab;
+            }
+
+            var shortLabel = label.substr(0, 2);
+
+            if (!params.colorsDisabled && !isGroup) {
+                color = this.getMetadata().get(['clientDefs', tab, 'color']);
+            }
+
+            if (!params.tabIconsDisabled && !isGroup) {
+                iconClass = this.getMetadata().get(['clientDefs', tab, 'iconClass'])
+            }
+
+            var o = {
+                link: link,
+                label: label,
+                shortLabel: shortLabel,
+                name: name,
+                isInMore: vars.moreIsMet,
+                color: color,
+                iconClass: iconClass,
+                isAfterShowMore: vars.isHidden,
+                aClassName: aClassName,
+                isGroup: isGroup,
+            };
+
+            if (isGroup) {
+                o.itemList = tab.itemList.map(
+                    function (tab, i) {
+                        return this.prepareTabItemDefs(params, tab, i, vars);
+                    },
+                    this
+                );
+            }
+
+            if (vars.isHidden) {
+                o.className = 'after-show-more';
+            }
+
+            if (color && !iconClass) {
+                o.colorIconClass = 'color-icon fas fa-square-full';
+            }
+
+            return o;
         },
 
         getMenuDataList: function () {

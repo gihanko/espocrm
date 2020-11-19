@@ -11,8 +11,18 @@
         <ul class="nav navbar-nav tabs">
             {{#each tabDefsList}}
             {{#unless isInMore}}
-            <li data-name="{{name}}" class="not-in-more tab">
-                <a href="{{link}}" class="{{aClassName}}"{{#if color}} style="border-color: {{color}}"{{/if}}>
+            <li data-name="{{name}}" class="not-in-more tab{{#if isGroup}} tab-group{{/if}}">
+                <a
+                    href="{{link}}"
+                    class="{{aClassName}}"
+                    {{#if color}}
+                        style="border-color: {{color}}"
+                    {{/if}}
+                    {{#if isGroup}}
+                        id="nav-tab-group-{{name}}"
+                        data-toggle="dropdown"
+                    {{/if}}
+                >
                     <span class="short-label"{{#if label}} title="{{label}}"{{/if}}{{#if color}} style="color: {{color}}"{{/if}}>
                         {{#if iconClass}}
                         <span class="{{iconClass}}"></span>
@@ -28,16 +38,60 @@
                     {{/if}}
                     {{#if html}}{{{html}}}{{/if}}
                 </a>
+                {{#if isGroup}}
+                <ul class="dropdown-menu" role="menu" aria-labelledby="nav-tab-group-{{name}}">
+                    {{#each itemList}}
+                    <li data-name="{{name}}" class="in-group tab{{#if isGroup}} tab-group{{/if}}">
+                        <a
+                            href="{{link}}"
+                            class="{{aClassName}}"
+                            {{#if color}}
+                                style="border-color: {{color}}"
+                            {{/if}}
+                            {{#if isGroup}}
+                                id="nav-tab-group-{{name}}"
+                                data-toggle="dropdown"
+                            {{/if}}
+                        >
+                            <span class="short-label"{{#if color}} style="color: {{color}}"{{/if}}>
+                                {{#if iconClass}}
+                                <span class="{{iconClass}}"></span>
+                                {{else}}
+                                {{#if colorIconClass}}
+                                <span class="{{colorIconClass}}" style="color: {{color}}"></span>
+                                {{/if}}
+                                <span class="short-label-text">&nbsp;</span>
+                                {{/if}}
+                            </span>
+                            <span class="full-label">{{label}}</span>
+                        </a>
+                    </li>
+                    {{/each}}
+                </ul>
+                {{/if}}
             </li>
             {{/unless}}
             {{/each}}
             <li class="dropdown more">
-                <a id="nav-more-tabs-dropdown" class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="fas fa-ellipsis-h more-icon"></span></a>
+                <a
+                    id="nav-more-tabs-dropdown"
+                    class="dropdown-toggle"
+                    data-toggle="dropdown"
+                    href="#"
+                ><span class="fas fa-ellipsis-h more-icon"></span></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="nav-more-tabs-dropdown">
                 {{#each tabDefsList}}
                 {{#if isInMore}}
                     <li data-name="{{name}}" class="in-more tab{{#if className}} {{className}}{{/if}}">
-                        <a href="{{link}}" class="{{aClassName}}"{{#if color}} style="border-color: {{color}}"{{/if}}>
+                        <a
+                            href="{{link}}"
+                            class="{{aClassName}}"
+                            {{#if color}} style="border-color: {{color}}"{{/if}}
+                            {{#if isGroup}}
+                                id="nav-tab-group-{{name}}"
+                                data-toggle="dropdown"
+                            {{/if}}
+                        >
                             <span class="short-label"{{#if color}} style="color: {{color}}"{{/if}}>
                                 {{#if iconClass}}
                                 <span class="{{iconClass}}"></span>
@@ -53,6 +107,37 @@
                             {{/if}}
                             {{#if html}}{{{html}}}{{/if}}
                         </a>
+                        {{#if isGroup}}
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="nav-tab-group-{{name}}">
+                            {{#each itemList}}
+                            <li data-name="{{name}}" class="in-group tab">
+                                <a
+                                    href="{{link}}"
+                                    class="{{aClassName}}"
+                                    {{#if color}}
+                                        style="border-color: {{color}}"
+                                    {{/if}}
+                                    {{#if isGroup}}
+                                        id="nav-tab-group-{{name}}"
+                                        data-toggle="dropdown"
+                                    {{/if}}
+                                >
+                                    <span class="short-label"{{#if color}} style="color: {{color}}"{{/if}}>
+                                        {{#if iconClass}}
+                                        <span class="{{iconClass}}"></span>
+                                        {{else}}
+                                        {{#if colorIconClass}}
+                                        <span class="{{colorIconClass}}" style="color: {{color}}"></span>
+                                        {{/if}}
+                                        <span class="short-label-text">&nbsp;</span>
+                                        {{/if}}
+                                    </span>
+                                    <span class="full-label">{{label}}</span>
+                                </a>
+                            </li>
+                            {{/each}}
+                        </ul>
+                        {{/if}}
                     </li>
                 {{/if}}
                 {{/each}}
