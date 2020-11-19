@@ -58,9 +58,16 @@
                 padding-top: 0;
                 padding-bottom: 0;
                 position: fixed;
-                border-left-width: 0;
-                border-top-width: 0;
                 overflow-y: hidden;
+            }
+
+            .nav > li.more > .dropdown-menu,
+            .nav > li.tab-group > .dropdown-menu {
+                border-left-width: 0;
+            }
+
+            .nav > li.more > .dropdown-menu {
+                border-top-width: 0;
             }
 
             ul.tabs {
