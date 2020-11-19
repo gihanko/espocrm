@@ -91,20 +91,45 @@ define('views/site/navbar', 'view', function (Dep) {
                 e.stopPropagation();
                 this.showMoreTabs();
             },
+            'click .not-in-more > .nav-link-group': function (e) {
+                this.positionGroupDropdown($(e.currentTarget));
+            },
             'click .in-more .nav-link-group': function (e) {
                 e.stopPropagation();
 
-                this.openGroup($(e.currentTarget));
+                this.openGroupInMore($(e.currentTarget));
             },
         },
 
-        openGroup: function ($target) {
+        positionGroupDropdown: function ($target) {
+            var $menu = $target.parent().find('.dropdown-menu');
+
+            var rectItem = $target.get(0).getBoundingClientRect();
+
+            var top = rectItem.top;
+
+            $menu.css({
+                top: top + 'px',
+            });
+        },
+
+        openGroupInMore: function ($target) {
             this.$el.find('.in-more.tab.dropdown').removeClass('open');
+
+            var $parentDropdown = this.$el.find('.more-dropdown-menu');
 
             $target.parent().addClass('open');
 
+            var $menu = $target.parent().find('.dropdown-menu');
 
-            $target.css({
+            var rectDropdown = $parentDropdown.get(0).getBoundingClientRect();
+            var rectItem = $target.get(0).getBoundingClientRect();
+
+            var left = rectDropdown.right;
+
+            var top = rectItem.top;
+
+            $menu.css({
                 left: left + 'px',
                 top: top + 'px',
             });

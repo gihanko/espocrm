@@ -79,7 +79,7 @@
                     data-toggle="dropdown"
                     href="#"
                 ><span class="fas fa-ellipsis-h more-icon"></span></a>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="nav-more-tabs-dropdown">
+                <ul class="dropdown-menu more-dropdown-menu" role="menu" aria-labelledby="nav-more-tabs-dropdown">
                 {{#each tabDefsList}}
                 {{#if isInMore}}
                     <li
