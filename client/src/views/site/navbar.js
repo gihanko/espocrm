@@ -97,7 +97,15 @@ define('views/site/navbar', 'view', function (Dep) {
             'click .in-more .nav-link-group': function (e) {
                 e.stopPropagation();
 
-                this.handleGroupDropdownInMoreOpen($(e.currentTarget));
+                var $target = $(e.currentTarget);
+
+                if ($target.parent().hasClass('open')) {
+                    $target.parent().removeClass('open');
+
+                    return;
+                }
+
+                this.handleGroupDropdownInMoreOpen($target);
             },
         },
 
