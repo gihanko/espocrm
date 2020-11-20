@@ -92,18 +92,18 @@ define('views/site/navbar', 'view', function (Dep) {
                 this.showMoreTabs();
             },
             'click .not-in-more > .nav-link-group': function (e) {
-                var $target = $(e.currentTarget);
-
-                if ($target.parent().hasClass('open')) {
-                    return;
-                }
-
-                this.handleGroupDropdownOpen($(e.currentTarget));
+                this.handleGroupDropdownClick(e);
             },
             'click .in-more .nav-link-group': function (e) {
-                e.stopPropagation();
+                this.handleGroupDropdownClick(e);
+            },
+        },
 
-                var $target = $(e.currentTarget);
+        handleGroupDropdownClick: function (e) {
+            var $target = $(e.currentTarget);
+
+            if ($target.parent().parent().hasClass('more-dropdown-menu')) {
+                e.stopPropagation();
 
                 if ($target.parent().hasClass('open')) {
                     $target.parent().removeClass('open');
@@ -112,7 +112,15 @@ define('views/site/navbar', 'view', function (Dep) {
                 }
 
                 this.handleGroupDropdownInMoreOpen($target);
-            },
+
+                return;
+            }
+
+            if ($target.parent().hasClass('open')) {
+                return;
+            }
+
+            this.handleGroupDropdownOpen($(e.currentTarget));
         },
 
         handleGroupMenuPosition: function ($menu, $target) {
