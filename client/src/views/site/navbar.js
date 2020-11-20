@@ -92,6 +92,12 @@ define('views/site/navbar', 'view', function (Dep) {
                 this.showMoreTabs();
             },
             'click .not-in-more > .nav-link-group': function (e) {
+                var $target = $(e.currentTarget);
+
+                if ($target.parent().hasClass('open')) {
+                    return;
+                }
+
                 this.handleGroupDropdownOpen($(e.currentTarget));
             },
             'click .in-more .nav-link-group': function (e) {
@@ -118,7 +124,7 @@ define('views/site/navbar', 'view', function (Dep) {
 
             var itemCount = $menu.children().length;
 
-            var tabHeight = this.$el.find('.tabs > .tab').height();
+            var tabHeight = this.$tabs.find('> .tab').height();
 
             var menuHeight = tabHeight * itemCount;
 
@@ -158,6 +164,10 @@ define('views/site/navbar', 'view', function (Dep) {
             var $menu = $target.parent().find('.dropdown-menu');
 
             this.handleGroupMenuPosition($menu, $target);
+
+            setTimeout(function () {
+                this.adjustBodyMinHeight();
+            }.bind(this), 50);
         },
 
         handleGroupDropdownInMoreOpen: function ($target) {
@@ -178,6 +188,8 @@ define('views/site/navbar', 'view', function (Dep) {
             });
 
             this.handleGroupMenuPosition($menu, $target);
+
+            this.adjustBodyMinHeight();
         },
 
         isCollapsableVisible: function () {
@@ -621,6 +633,28 @@ define('views/site/navbar', 'view', function (Dep) {
             }.bind(this));
 
             minHeight = Math.max(minHeight, moreHeight);
+
+            var tabHeight = this.$tabs.find('> .tab').height();
+
+            this.tabList.forEach(function (item, i) {
+                if (typeof item !== 'object') {
+                    return;
+                }
+
+                var $li = this.$el.find('li.tab[data-name="group-'+i+'"]');
+
+                if (!$li.hasClass('open')) {
+                    return;
+                }
+
+                var tabCount = (item.itemList || []).length;
+
+                var menuHeight = tabHeight * tabCount;
+
+                if (menuHeight > minHeight) {
+                    minHeight = menuHeight;
+                }
+            }, this);
 
             this.$body.css('minHeight', minHeight + 'px');
         },
