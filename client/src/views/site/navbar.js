@@ -168,6 +168,12 @@ define('views/site/navbar', 'view', function (Dep) {
             setTimeout(function () {
                 this.adjustBodyMinHeight();
             }.bind(this), 50);
+
+            $target.parent().off('hidden.bs.dropdown');
+
+            $target.parent().on('hidden.bs.dropdown', function () {
+                this.adjustBodyMinHeight();
+            }.bind(this));
         },
 
         handleGroupDropdownInMoreOpen: function ($target) {
