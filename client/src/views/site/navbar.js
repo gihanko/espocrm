@@ -104,9 +104,23 @@ define('views/site/navbar', 'view', function (Dep) {
         handleGroupMenuPosition: function ($menu, $target) {
             var rectItem = $target.get(0).getBoundingClientRect();
 
-            var top = rectItem.top;
+            var top = rectItem.top - 1;
 
             var windowHeight = window.innerHeight;
+
+            if (top > windowHeight * 0.8) {
+                var itemCount = $menu.children().length;
+
+                var tabHeight = this.$el.find('.tabs > .tab').height();
+
+                var menuHeight = tabHeight * itemCount;
+
+                top = top - menuHeight + tabHeight;
+
+                if (top < 0) {
+                    top = 0;
+                }
+            }
 
             var maxHeight = windowHeight - top;
 
@@ -121,12 +135,10 @@ define('views/site/navbar', 'view', function (Dep) {
 
             $window.on('scroll.navbar-tab-group', function () {
                 if (!$menu.get(0) || !$target.get(0)) {
-                    console.log(1);
                     return;
                 }
 
                 if (!$target.parent().hasClass('open')) {
-                    console.log(2);
                     return;
                 }
 
