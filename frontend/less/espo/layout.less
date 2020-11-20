@@ -49,11 +49,15 @@
             display: inline;
         }
 
-        > li.more {
-            > ul {
+        > li.more,
+        > li.tab-group {
+            > ul,
+            > ul > li > ul {
                 padding-top: 0;
                 padding-bottom: 0;
             }
+
+            > ul > li > ul > li > a,
             > ul > li > a {
                 padding-top: 9px;
                 padding-bottom: 9px;
@@ -178,8 +182,11 @@
 
         .nav > li.more > .dropdown-menu > li.tab-group > ul.dropdown-menu,
         .nav > li.tab-group > .dropdown-menu {
-            position: fixed;
             overflow-y: hidden;
+        }
+
+        .nav > li.more > .dropdown-menu > li.tab-group > ul.dropdown-menu {
+            position: fixed;
         }
     }
 }

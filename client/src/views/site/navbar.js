@@ -100,13 +100,13 @@ define('views/site/navbar', 'view', function (Dep) {
         },
 
         handleGroupDropdownClick: function (e) {
-            var $target = $(e.currentTarget);
+            var $target = $(e.currentTarget).parent();
 
-            if ($target.parent().parent().hasClass('more-dropdown-menu')) {
+            if ($target.parent().hasClass('more-dropdown-menu')) {
                 e.stopPropagation();
 
-                if ($target.parent().hasClass('open')) {
-                    $target.parent().removeClass('open');
+                if ($target.hasClass('open')) {
+                    $target.removeClass('open');
 
                     return;
                 }
@@ -116,25 +116,42 @@ define('views/site/navbar', 'view', function (Dep) {
                 return;
             }
 
-            if ($target.parent().hasClass('open')) {
+            if ($target.hasClass('open')) {
                 return;
             }
 
-            this.handleGroupDropdownOpen($(e.currentTarget));
+            this.handleGroupDropdownOpen($target);
         },
 
         handleGroupMenuPosition: function ($menu, $target) {
+            if (this.navbarAdjustmentHandler && this.navbarAdjustmentHandler.handleGroupMenuPosition()) {
+                this.handleGroupMenuPosition($menu, $target);
+
+                return;
+            }
+
             var rectItem = $target.get(0).getBoundingClientRect();
 
-            var top = rectItem.top - 1;
-
             var windowHeight = window.innerHeight;
+
+            if (
+                !this.getThemeManager().getParam('navbarIsVertical') &&
+                !$target.parent().hasClass('more-dropdown-menu')
+            ) {
+                var maxHeight = windowHeight - rectItem.bottom;
+
+                this.handleGroupMenuScrolling($menu, $target, maxHeight);
+
+                return;
+            }
 
             var itemCount = $menu.children().length;
 
             var tabHeight = this.$tabs.find('> .tab').height();
 
             var menuHeight = tabHeight * itemCount;
+
+            var top = rectItem.top - 1;
 
             if (top + menuHeight > windowHeight) {
                 top = windowHeight - menuHeight - 2;
@@ -144,10 +161,17 @@ define('views/site/navbar', 'view', function (Dep) {
                 }
             }
 
-            var maxHeight = windowHeight - top;
-
             $menu.css({
                 top: top + 'px',
+            });
+
+            var maxHeight = windowHeight - top;
+
+            this.handleGroupMenuScrolling($menu, $target, maxHeight);
+        },
+
+        handleGroupMenuScrolling: function ($menu, $target, maxHeight) {
+            $menu.css({
                 maxHeight: maxHeight + 'px',
             });
 
@@ -160,7 +184,7 @@ define('views/site/navbar', 'view', function (Dep) {
                     return;
                 }
 
-                if (!$target.parent().hasClass('open')) {
+                if (!$target.hasClass('open')) {
                     return;
                 }
 
@@ -169,7 +193,7 @@ define('views/site/navbar', 'view', function (Dep) {
         },
 
         handleGroupDropdownOpen: function ($target) {
-            var $menu = $target.parent().find('.dropdown-menu');
+            var $menu = $target.find('.dropdown-menu');
 
             this.handleGroupMenuPosition($menu, $target);
 
@@ -177,22 +201,21 @@ define('views/site/navbar', 'view', function (Dep) {
                 this.adjustBodyMinHeight();
             }.bind(this), 50);
 
-            $target.parent().off('hidden.bs.dropdown');
+            $target.off('hidden.bs.dropdown');
 
-            $target.parent().on('hidden.bs.dropdown', function () {
+            $target.on('hidden.bs.dropdown', function () {
                 this.adjustBodyMinHeight();
             }.bind(this));
         },
 
         handleGroupDropdownInMoreOpen: function ($target) {
             this.$el.find('.tab-group.tab.dropdown').removeClass('open');
-            console.log(this.$el.find('.tab-group.tab.dropdown').length);
 
             var $parentDropdown = this.$el.find('.more-dropdown-menu');
 
-            $target.parent().addClass('open');
+            $target.addClass('open');
 
-            var $menu = $target.parent().find('.dropdown-menu');
+            var $menu = $target.find('.dropdown-menu');
 
             var rectDropdown = $parentDropdown.get(0).getBoundingClientRect();
 
@@ -731,6 +754,9 @@ define('views/site/navbar', 'view', function (Dep) {
             if (handlerClassName) {
                 require(handlerClassName, function (Handler) {
                     var handler = new Handler(this);
+
+                    this.navbarAdjustmentHandler = handler;
+
                     handler.process();
                 }.bind(this));
             }
