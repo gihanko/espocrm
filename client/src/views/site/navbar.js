@@ -234,6 +234,14 @@ define('views/site/navbar', 'view', function (Dep) {
             this.handleGroupMenuPosition($menu, $target);
 
             this.adjustBodyMinHeight();
+
+            if (!this.getThemeManager().getParam('isVertical')) {
+                if (left + $menu.width() > window.innerWidth) {
+                    $menu.css({
+                        left: rectDropdown.left - $menu.width() - 2,
+                    });
+                }
+            }
         },
 
         isCollapsableVisible: function () {
