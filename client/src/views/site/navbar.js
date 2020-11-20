@@ -101,16 +101,43 @@ define('views/site/navbar', 'view', function (Dep) {
             },
         },
 
-        handleGroupDropdownOpen: function ($target) {
-            var $menu = $target.parent().find('.dropdown-menu');
-
+        handleGroupMenuPosition: function ($menu, $target) {
             var rectItem = $target.get(0).getBoundingClientRect();
 
             var top = rectItem.top;
 
+            var windowHeight = window.innerHeight;
+
+            var maxHeight = windowHeight - top;
+
             $menu.css({
                 top: top + 'px',
+                maxHeight: maxHeight + 'px',
             });
+
+            var $window = $(window);
+
+            $window.off('scroll.navbar-tab-group');
+
+            $window.on('scroll.navbar-tab-group', function () {
+                if (!$menu.get(0) || !$target.get(0)) {
+                    console.log(1);
+                    return;
+                }
+
+                if (!$target.parent().hasClass('open')) {
+                    console.log(2);
+                    return;
+                }
+
+                $menu.scrollTop($window.scrollTop());
+            });
+        },
+
+        handleGroupDropdownOpen: function ($target) {
+            var $menu = $target.parent().find('.dropdown-menu');
+
+            this.handleGroupMenuPosition($menu, $target);
         },
 
         handleGroupDropdownInMoreOpen: function ($target) {
@@ -123,16 +150,14 @@ define('views/site/navbar', 'view', function (Dep) {
             var $menu = $target.parent().find('.dropdown-menu');
 
             var rectDropdown = $parentDropdown.get(0).getBoundingClientRect();
-            var rectItem = $target.get(0).getBoundingClientRect();
 
             var left = rectDropdown.right;
 
-            var top = rectItem.top;
-
             $menu.css({
                 left: left + 'px',
-                top: top + 'px',
             });
+
+            this.handleGroupMenuPosition($menu, $target);
         },
 
         isCollapsableVisible: function () {
@@ -303,6 +328,7 @@ define('views/site/navbar', 'view', function (Dep) {
             this.once('remove', function () {
                 $(window).off('resize.navbar');
                 $(window).off('scroll.navbar');
+                $(window).off('scroll.navbar-tab-group');
             });
         },
 
