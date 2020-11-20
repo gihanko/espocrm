@@ -185,7 +185,8 @@ define('views/site/navbar', 'view', function (Dep) {
         },
 
         handleGroupDropdownInMoreOpen: function ($target) {
-            this.$el.find('.in-more.tab.dropdown').removeClass('open');
+            this.$el.find('.tab-group.tab.dropdown').removeClass('open');
+            console.log(this.$el.find('.tab-group.tab.dropdown').length);
 
             var $parentDropdown = this.$el.find('.more-dropdown-menu');
 

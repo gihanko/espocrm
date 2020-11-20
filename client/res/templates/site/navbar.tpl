@@ -11,7 +11,7 @@
         <ul class="nav navbar-nav tabs">
             {{#each tabDefsList}}
             {{#unless isInMore}}
-            <li data-name="{{name}}" class="not-in-more tab{{#if isGroup}} tab-group{{/if}}">
+            <li data-name="{{name}}" class="not-in-more tab{{#if isGroup}} tab-group dropdown{{/if}}">
                 <a
                     href="{{link}}"
                     class="{{aClassName}}"
@@ -41,7 +41,7 @@
                 {{#if isGroup}}
                 <ul class="dropdown-menu" role="menu" aria-labelledby="nav-tab-group-{{name}}">
                     {{#each itemList}}
-                    <li data-name="{{name}}" class="in-group tab{{#if isGroup}} tab-group{{/if}}">
+                    <li data-name="{{name}}" class="in-group tab">
                         <a
                             href="{{link}}"
                             class="{{aClassName}}"
@@ -84,7 +84,7 @@
                 {{#if isInMore}}
                     <li
                         data-name="{{name}}"
-                        class="in-more tab{{#if className}} {{className}}{{/if}}{{#if isGroup}} dropdown{{/if}}"
+                        class="in-more tab{{#if className}} {{className}}{{/if}}{{#if isGroup}} dropdown tab-group{{/if}}"
                     >
                         <a
                             href="{{link}}"
