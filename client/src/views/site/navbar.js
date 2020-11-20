@@ -116,14 +116,14 @@ define('views/site/navbar', 'view', function (Dep) {
 
             var windowHeight = window.innerHeight;
 
-            if (top > windowHeight * 0.8) {
-                var itemCount = $menu.children().length;
+            var itemCount = $menu.children().length;
 
-                var tabHeight = this.$el.find('.tabs > .tab').height();
+            var tabHeight = this.$el.find('.tabs > .tab').height();
 
-                var menuHeight = tabHeight * itemCount;
+            var menuHeight = tabHeight * itemCount;
 
-                top = top - menuHeight + tabHeight;
+            if (top + menuHeight > windowHeight) {
+                top = windowHeight - menuHeight - 2;
 
                 if (top < 0) {
                     top = 0;
