@@ -134,8 +134,10 @@ define('views/site/navbar', 'view', function (Dep) {
 
             var windowHeight = window.innerHeight;
 
+            var isVertical = this.getThemeManager().getParam('navbarIsVertical');
+
             if (
-                !this.getThemeManager().getParam('navbarIsVertical') &&
+                !isVertical &&
                 !$target.parent().hasClass('more-dropdown-menu')
             ) {
                 var maxHeight = windowHeight - rectItem.bottom;
@@ -147,7 +149,11 @@ define('views/site/navbar', 'view', function (Dep) {
 
             var itemCount = $menu.children().length;
 
-            var tabHeight = this.$tabs.find('> .tab').height();
+            if (isVertical) {
+                var tabHeight = this.$tabs.find('> .tab').height();
+            } else {
+                var tabHeight = this.$tabs.find('.tab-group > ul > li:visible').height();
+            }
 
             var menuHeight = tabHeight * itemCount;
 
@@ -698,19 +704,47 @@ define('views/site/navbar', 'view', function (Dep) {
         },
 
         adjustBodyMinHeightHorizontal: function () {
-            var height = this.getNavbarHeight();
+            var minHeight = this.getNavbarHeight();
 
             this.$more.find('> li').each(function (i, el) {
                 var $el = $(el);
+
                 if (!this.isMoreTabsShown) {
-                    if ($el.hasClass('after-show-more')) return;
+                    if ($el.hasClass('after-show-more')) {
+                        return;
+                    }
                 } else {
-                    if ($el.hasClass('show-more')) return;
+                    if ($el.hasClass('show-more')) {
+                        return;
+                    }
                 }
-                height += $el.height();
+
+                minHeight += $el.height();
             }.bind(this));
 
-            this.$body.css('minHeight', height + 'px');
+            var tabHeight = this.$tabs.find('.tab-group > ul > li:visible').height();
+
+            this.tabList.forEach(function (item, i) {
+                if (typeof item !== 'object') {
+                    return;
+                }
+
+                var $li = this.$el.find('li.tab[data-name="group-'+i+'"]');
+
+                if (!$li.hasClass('open')) {
+                    return;
+                }
+
+                var tabCount = (item.itemList || []).length;
+
+                var menuHeight = tabHeight * tabCount;
+
+                if (menuHeight > minHeight) {
+                    minHeight = menuHeight;
+                }
+            }, this);
+
+            this.$body.css('minHeight', minHeight + 'px');
         },
 
         afterRender: function () {
