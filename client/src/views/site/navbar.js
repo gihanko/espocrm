@@ -930,7 +930,7 @@ define('views/site/navbar', 'view', function (Dep) {
             else if (typeof tab === 'object') {
                 isGroup = true;
 
-                label = tab.label;
+                label = tab.text;
                 color = tab.color;
                 iconClass = tab.iconClass;
 

@@ -42,8 +42,8 @@ define('views/settings/modals/tab-list-field-add', 'views/modals/array-field-add
         actionAddGroup: function () {
             this.trigger('add', {
                 type: 'group',
-                label: this.translate('Group Tab', 'labels', 'Settings'),
-                iconClass: 'fas ellipsis-v',
+                text: this.translate('Group Tab', 'labels', 'Settings'),
+                iconClass: 'fas fa-ellipsis-v',
                 color: null,
             });
         },

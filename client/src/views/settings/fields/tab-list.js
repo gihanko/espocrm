@@ -32,6 +32,28 @@ define('views/settings/fields/tab-list', 'views/fields/array', function (Dep) {
 
         addItemModalView: 'views/settings/modals/tab-list-field-add',
 
+        setup: function () {
+            Dep.prototype.setup.call(this);
+
+            this.selected.forEach(function (item) {
+                if (item && typeof item === 'object') {
+                    if (!item.id) {
+                        item.id = this.generateItemId();
+                    }
+                }
+            }, this);
+
+            this.events['click [data-action="editGroup"]'] = function (e) {
+                var id = $(e.currentTarget).parent().data('value').toString();
+
+                this.editGroup(id);
+            }.bind(this);
+        },
+
+        generateItemId: function () {
+            return Math.floor(Math.random() * 1000000 + 1).toString();
+        },
+
         setupOptions: function () {
 
             this.params.options = Object.keys(this.getMetadata().get('scopes')).filter(function (scope) {
@@ -57,7 +79,7 @@ define('views/settings/fields/tab-list', 'views/fields/array', function (Dep) {
         addValue: function (value) {
             if (value && typeof value === 'object') {
                 if (!value.id) {
-                    value.id = Math.floor(Math.random() * 1000000 + 1).toString();
+                    value.id = this.generateItemId();
                 }
 
                 var html = this.getItemHtml(value);
@@ -98,7 +120,7 @@ define('views/settings/fields/tab-list', 'views/fields/array', function (Dep) {
         },
 
         getGroupItemHtml: function (item) {
-            var label = this.escapeValue(item.label || '');
+            var label = this.escapeValue(item.text || '');
 
             var html = '<div class="list-group-item" data-value="' + item.id + '" style="cursor: default;">' +
                 '<a href="javascript:" class="" data-value="' + item.id + '" ' +
@@ -159,6 +181,10 @@ define('views/settings/fields/tab-list', 'views/fields/array', function (Dep) {
             }
 
             return null;
+        },
+
+        editGroup: function (id) {
+            console.log(id);
         },
 
     });
