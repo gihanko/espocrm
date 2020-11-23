@@ -184,7 +184,23 @@ define('views/settings/fields/tab-list', 'views/fields/array', function (Dep) {
         },
 
         editGroup: function (id) {
-            console.log(id);
+            var item = Espo.Utils.cloneDeep(
+                this.getGroupValueById(id) || {}
+            );
+
+            var index = this.getGroupIndexById(id);
+
+            this.createView('dialog', 'views/settings/modals/edit-tab-group', {
+                itemData: item,
+            }, function (view) {
+                view.render();
+
+                this.listenToOnce(view, 'apply', function (itemData) {
+                    this.selected[index] = itemData;
+
+                    this.trigger('change');
+                }, this);
+            });
         },
 
     });
