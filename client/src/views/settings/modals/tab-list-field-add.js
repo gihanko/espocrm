@@ -26,36 +26,26 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-define('views/modals/array-field-add', 'views/modal', function (Dep) {
+define('views/settings/modals/tab-list-field-add', 'views/modals/array-field-add', function (Dep) {
 
     return Dep.extend({
 
-        cssName: 'add-modal',
-
-        template: 'modals/array-field-add',
-
-        backdrop: true,
-
-        fitHeight: true,
-
-        data: function () {
-            return {
-                optionList: this.options.options,
-                translatedOptions: this.options.translatedOptions,
-            };
-        },
-
-        events: {
-            'click .add': function (e) {
-                var value = $(e.currentTarget).attr('data-value');
-                this.trigger('add', value);
-            },
-        },
-
         setup: function () {
-            this.header = this.translate('Add Item');
+            Dep.prototype.setup.call(this);
 
-            this.buttonList = [];
+            this.buttonList.push({
+                name: 'addGroup',
+                html: this.translate('Group Tab', 'labels', 'Settings'),
+            });
+        },
+
+        actionAddGroup: function () {
+            this.trigger('add', {
+                type: 'group',
+                label: this.translate('Group Tab', 'labels', 'Settings'),
+                iconClass: 'fas ellipsis-v',
+                color: null,
+            });
         },
 
     });

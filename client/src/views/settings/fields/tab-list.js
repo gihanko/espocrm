@@ -30,6 +30,8 @@ define('views/settings/fields/tab-list', 'views/fields/array', function (Dep) {
 
     return Dep.extend({
 
+        addItemModalView: 'views/settings/modals/tab-list-field-add',
+
         setupOptions: function () {
 
             this.params.options = Object.keys(this.getMetadata().get('scopes')).filter(function (scope) {
@@ -50,6 +52,113 @@ define('views/settings/fields/tab-list', 'views/fields/array', function (Dep) {
 
             this.translatedOptions['_delimiter_'] = '. . .';
             this.translatedOptions['_delimiter-ext_'] = '. . .';
+        },
+
+        addValue: function (value) {
+            if (value && typeof value === 'object') {
+                if (!value.id) {
+                    value.id = Math.floor(Math.random() * 1000000 + 1).toString();
+                }
+
+                var html = this.getItemHtml(value);
+
+                this.$list.append(html);
+
+                this.selected.push(value);
+
+                this.trigger('change');
+
+                return;
+            }
+
+            Dep.prototype.addValue.call(this, value);
+        },
+
+        removeValue: function (value) {
+            var index = this.getGroupIndexById(value);
+
+            if (~index) {
+                this.$list.children('[data-value="' + value + '"]').remove();
+
+                this.selected.splice(index, 1);
+                this.trigger('change');
+
+                return;
+            }
+
+            Dep.prototype.removeValue.call(this, value);
+        },
+
+        getItemHtml: function (value) {
+            if (value && typeof value === 'object') {
+                return this.getGroupItemHtml(value);
+            }
+
+            return Dep.prototype.getItemHtml.call(this, value);
+        },
+
+        getGroupItemHtml: function (item) {
+            var label = this.escapeValue(item.label || '');
+
+            var html = '<div class="list-group-item" data-value="' + item.id + '" style="cursor: default;">' +
+                '<a href="javascript:" class="" data-value="' + item.id + '" ' +
+                    'data-action="editGroup" style="margin-right: 7px;">' +
+                '<span class="fas fa-pencil-alt fa-sm"></span>' +
+                '</a>' +
+                label +
+                '&nbsp;' +
+                '<a href="javascript:" class="pull-right" data-value="' + item.id + '" data-action="removeValue">' +
+                '<span class="fas fa-times"></span>' +
+                '</a>' +
+                '</div>';
+
+            return html;
+        },
+
+        fetchFromDom: function () {
+            var selected = [];
+
+            this.$el.find('.list-group .list-group-item').each(function (i, el) {
+                var value = $(el).data('value').toString();
+
+                var groupItem = this.getGroupValueById(value);
+
+                if (groupItem) {
+                    selected.push(groupItem);
+
+                    return;
+                }
+
+                selected.push(value);
+            }.bind(this));
+
+            this.selected = selected;
+        },
+
+        getGroupIndexById: function (id) {
+            for (var i = 0; i < this.selected.length; i++) {
+                var item = this.selected[i];
+
+                if (item && typeof item === 'object') {
+                    if (item.id === id) {
+                        return i;
+                    }
+                }
+            }
+
+            return -1;
+        },
+
+        getGroupValueById: function (id) {
+            for (var item of this.selected) {
+                if (item && typeof item === 'object') {
+                    if (item.id === id) {
+                        return item;
+                    }
+                }
+            }
+
+            return null;
         },
 
     });
