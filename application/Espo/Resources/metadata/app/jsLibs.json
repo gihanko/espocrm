@@ -9,6 +9,11 @@
         "exportsTo": "window",
         "exportsAs": "EspoFunnel"
     },
+    "d3": {
+        "path": "client/lib/d3.v6.min.js",
+        "exportsTo": "window",
+        "exportsAs": "d3"
+    },
     "Summernote": {
         "path": "client/lib/summernote.min.js",
         "exportsTo": "$",

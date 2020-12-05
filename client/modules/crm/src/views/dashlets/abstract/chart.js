@@ -30,7 +30,7 @@ define('crm:views/dashlets/abstract/chart', ['views/dashlets/abstract/base','lib
 
     return Dep.extend({
 
-        _template: '<div class="chart-container"></div><div class="legend-container"></div>',
+        _template: '<div class="chart-container"></div><div class="legend-container"></div><div class="d3-container"></div>',
 
         decimalMark: '.',
 

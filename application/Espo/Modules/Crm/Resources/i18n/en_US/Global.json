@@ -57,7 +57,8 @@
         "OpportunitiesByLeadSource": "Opportunities by Lead Source",
         "SalesByMonth": "Sales by Month",
         "SalesPipeline": "Sales Pipeline",
-        "Activities": "My Activities"
+        "Activities": "My Activities",
+        "BusinessWon": "Business Won"
     },
     "labels": {
         "Scheduler": "Scheduler",
