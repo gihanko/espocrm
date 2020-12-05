@@ -76,6 +76,10 @@ class Opportunity extends \Espo\Core\Controllers\Record
         return $this->getService('Opportunity')->reportSalesByMonth($dateFilter, $dateFrom, $dateTo);
     }
 
+    public function actionReportBusinessWon($params, $data, $request) {
+        return $this->getService('Opportunity')->reportBusinessWon();
+    }
+
     public function actionReportSalesPipeline($params, $data, $request)
     {
         $level = $this->getAcl()->getLevel('Opportunity', 'read');
