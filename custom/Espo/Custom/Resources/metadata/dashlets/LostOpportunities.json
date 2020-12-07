@@ -1,0 +1,4 @@
+{
+    "view":"custom:views/dashlets/lost-opportunities",
+    "aclScope": "Opportunity"
+}

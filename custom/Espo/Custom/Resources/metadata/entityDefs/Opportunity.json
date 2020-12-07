@@ -1,0 +1,19 @@
+{
+    "fields": {
+        "reason": {
+            "type": "enum",
+            "options": [
+                "Price",
+                "Customer Experience",
+                "Features"
+            ],
+            "style": {
+                "Price": null,
+                "Customer Experience": null,
+                "Features": null
+            },
+            "default": "Price",
+            "isCustom": true
+        }
+    }
+}

@@ -67,7 +67,7 @@ class Opportunity extends \Espo\Services\Record
     public function reportLostOpportunities() {
         $sql = "select reason, count(*) as count, round(sum(amount), 2) as amount
         from opportunity
-        where stage in ('Lost', 'Future')
+        where stage in ('Closed Lost')
         and year(close_date) = year(now())
         group by reason order by sum(amount) desc";
 
