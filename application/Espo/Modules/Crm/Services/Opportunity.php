@@ -44,13 +44,32 @@ class Opportunity extends \Espo\Services\Record
         'accountName'
     ];
 
-    public function reportBusinessWon($dateFilter = 'currentYear', $dateFrom = null, $dateTo = null, $useLastStage = false, $teamId = null) {
+    public function reportBusinessWon() {
         $sql = "select monthname(close_date) as month, round(sum(amount), 2) as amount, count(*) as count 
         from opportunity
         where stage = 'Closed Won'
         and close_date > concat(year(now()), '-01-01')
         group by monthname(close_date), month(close_date)
         order by month(close_date)";
+
+        $pdo = $this->getEntityManager()->getPDO();
+
+        $sth = $pdo->prepare($sql);
+        $sth->execute();
+
+        $rows = $sth->fetchAll(\PDO::FETCH_ASSOC);
+
+        return [
+            'dataList' => $rows,
+        ];
+    }
+
+    public function reportLostOpportunities() {
+        $sql = "select reason, count(*) as count, round(sum(amount), 2) as amount
+        from opportunity
+        where stage in ('Lost', 'Future')
+        and year(close_date) = year(now())
+        group by reason order by sum(amount) desc";
 
         $pdo = $this->getEntityManager()->getPDO();
 
