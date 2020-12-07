@@ -17,5 +17,5 @@
 .phpunit.result.cache
 /composer.phar
 /vendor/
-/custom/Espo/Custom/*
+# /custom/Espo/Custom/*
 /install/config.php

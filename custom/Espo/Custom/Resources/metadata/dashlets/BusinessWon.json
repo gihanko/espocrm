@@ -1,0 +1,4 @@
+{
+    "view":"custom:views/dashlets/business-won",
+    "aclScope": "Opportunity"
+}

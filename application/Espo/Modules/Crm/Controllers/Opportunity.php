@@ -80,6 +80,10 @@ class Opportunity extends \Espo\Core\Controllers\Record
         return $this->getService('Opportunity')->reportBusinessWon();
     }
 
+    public function actionReportLostOpportunities() {
+        return $this->getService('Opportunity')->reportLostOpportunities();
+    }
+
     public function actionReportSalesPipeline($params, $data, $request)
     {
         $level = $this->getAcl()->getLevel('Opportunity', 'read');
