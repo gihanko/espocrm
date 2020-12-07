@@ -1,0 +1,12 @@
+{
+    "fields": {
+        "reason": "Reason"
+    },
+    "options": {
+        "reason": {
+            "Price": "Price",
+            "Customer Experience": "Customer Experience",
+            "Features": "Features"
+        }
+    }
+}

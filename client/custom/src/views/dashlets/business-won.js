@@ -51,7 +51,7 @@ define('custom:views/dashlets/business-won', ['crm:views/dashlets/abstract/chart
             return response.dataList.map(item => ({
                 name: item.month,
                 value: parseFloat(item.amount),
-                count: 100,
+                count: item.count,
             }));
         },
 
@@ -128,12 +128,12 @@ define('custom:views/dashlets/business-won', ['crm:views/dashlets/abstract/chart
                 .data(data)
                 .join("rect")
                 .attr("x", (d, i) => x(i) + x.bandwidth() / 3)
-                .attr("y", d => y(d.count))
+                .attr("y", d => y2(d.count))
                 .attr("width", x.bandwidth() / 2)
                 .transition()
                 .ease(d3.easeLinear)
                 .duration(2000)
-                .attr("height", d => y(0) - y(d.count));
+                .attr("height", d => y2(0) - y2(d.count));
 
             svg.append("g")
                 .call(xAxis);
