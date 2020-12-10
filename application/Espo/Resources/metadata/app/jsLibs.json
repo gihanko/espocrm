@@ -14,6 +14,11 @@
         "exportsTo": "window",
         "exportsAs": "d3"
     },
+    "vega": {
+        "path": "client/lib/vega@5.17.0.js",
+        "exportsTo": "window",
+        "exportsAs": "vega"
+    },
     "Summernote": {
         "path": "client/lib/summernote.min.js",
         "exportsTo": "$",
